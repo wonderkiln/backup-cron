@@ -1,8 +1,23 @@
 import { exec } from "child_process";
 import { PutObjectCommand, S3Client, S3ClientConfig } from "@aws-sdk/client-s3";
+import { BlobServiceClient } from "@azure/storage-blob";
 import { createReadStream, unlink } from "fs";
 
 import { env } from "./env";
+
+const uploadToAzure = async ({ name, path }: {name: string, path: string}) => {
+  console.log("Uploading backup to Azure...");
+
+  const blobServiceClient = BlobServiceClient.fromConnectionString(env.AZURE_CONNECTION_STRING);
+  const containerClient = blobServiceClient.getContainerClient(env.AZURE_CONTAINER_NAME);
+  const blockBlobClient = containerClient.getBlockBlobClient(name);
+  const response = await blockBlobClient.uploadFile(path);
+  if (response._response.status < 200 || response._response.status > 299) {
+    throw new Error(`Error uploading document ${blockBlobClient.name} to container ${blockBlobClient.containerName}`);
+  } else {
+    console.log("Backup uploaded to Azure...");
+  }
+}
 
 const uploadToS3 = async ({ name, path }: {name: string, path: string}) => {
   console.log("Uploading backup to S3...");
@@ -71,7 +86,16 @@ export const backup = async () => {
   const filepath = `/tmp/${filename}`
 
   await dumpToFile(filepath)
-  await uploadToS3({name: filename, path: filepath})
+  try {
+    await uploadToAzure({name: filename, path: filepath})
+  } catch (e) {
+    console.log("uploadToAzure failed with exception", e)
+  }
+  try {
+    await uploadToS3({name: filename, path: filepath})
+  } catch (e) {
+    console.log("uploadToS3 failed with exception", e)
+  }
   await deleteFile(filepath)
 
   console.log("DB backup complete...")
