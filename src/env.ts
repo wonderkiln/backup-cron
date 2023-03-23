@@ -1,9 +1,13 @@
 import { envsafe, str } from "envsafe";
 
 export const env = envsafe({
-  SERVICE_TYPE: str(),
+  SERVICE_TYPE: str({
+    default: 'azure'
+  }),
   AZURE_CONNECTION_STRING: str(),
-  AZURE_CONTAINER_NAME: str(),
+  AZURE_CONTAINER_NAME: str({
+    default: 'dbbackups'
+  }),
   AWS_ACCESS_KEY_ID: str(),
   AWS_SECRET_ACCESS_KEY: str(),
   AWS_S3_BUCKET: str(),
