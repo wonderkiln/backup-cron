@@ -4,14 +4,14 @@ export const env = envsafe({
   SERVICE_TYPE: str({
     default: 'azure'
   }),
-  AZURE_CONNECTION_STRING: str({ default: '' }),
+  AZURE_CONNECTION_STRING: str({ default: 'r' }),
   AZURE_CONTAINER_NAME: str({
     default: 'dbbackups'
   }),
-  AWS_ACCESS_KEY_ID: str({ default: '' }),
-  AWS_SECRET_ACCESS_KEY: str({ default: '' }),
-  AWS_S3_BUCKET: str({ default: '' }),
-  AWS_S3_REGION: str({ default: '' }),
+  AWS_ACCESS_KEY_ID: str({ default: 'r' }),
+  AWS_SECRET_ACCESS_KEY: str({ default: 'r' }),
+  AWS_S3_BUCKET: str({ default: 'r' }),
+  AWS_S3_REGION: str({ default: 'r' }),
   BACKUP_DATABASE_URL: str({
     desc: 'The connection string of the database to backup.'
   }),
