@@ -1,6 +1,7 @@
 import { envsafe, str } from "envsafe";
 
 export const env = envsafe({
+  SERVICE_TYPE: str(),
   AZURE_CONNECTION_STRING: str(),
   AZURE_CONTAINER_NAME: str(),
   AWS_ACCESS_KEY_ID: str(),

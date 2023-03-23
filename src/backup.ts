@@ -86,16 +86,23 @@ export const backup = async () => {
   const filepath = `/tmp/${filename}`
 
   await dumpToFile(filepath)
-  try {
-    await uploadToAzure({name: filename, path: filepath})
-  } catch (e) {
-    console.log("uploadToAzure failed with exception", e)
+
+  if (env.SERVICE_TYPE === "azure" || env.SERVICE_TYPE === "both") {
+    try {
+      await uploadToAzure({name: filename, path: filepath})
+    } catch (e) {
+      console.log("uploadToAzure failed with exception", e)
+    }
   }
-  try {
-    await uploadToS3({name: filename, path: filepath})
-  } catch (e) {
-    console.log("uploadToS3 failed with exception", e)
+
+  if (env.SERVICE_TYPE === "s3" || env.SERVICE_TYPE === "both") {
+    try {
+      await uploadToS3({name: filename, path: filepath})
+    } catch (e) {
+      console.log("uploadToS3 failed with exception", e)
+    }
   }
+
   await deleteFile(filepath)
 
   console.log("DB backup complete...")
